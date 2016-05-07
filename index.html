@@ -6,10 +6,23 @@
   </head>
   <body>
     <p>Hello World!</p>
+	<form>
+		<input type="text" name="query" />
+		<button type="submit">Save</button>
+	</form>
+	<div id="streamList"></div>
     <script type="text/javascript" src="js/event.js"></script>
 	<script type="text/javascript" src="js/model.js"></script>
 	<script type="text/javascript" src="js/view.js"></script>
 	<script type="text/javascript" src="js/controller.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/html" id="streamTemplate">
+		<div>
+			<img src="{{preview}}" alt="{{displayName}}" />
+			<h1>{{displayName}}</h1>
+			<h2>{{game}} - {{viewers}} viewers</h2>
+			<h3>{{description}}</h3>
+		</div>
+	</script>
   </body>
 </html>
