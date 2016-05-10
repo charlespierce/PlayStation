@@ -1,5 +1,4 @@
 'use strict';
-
 var PS = PS || {};
 
 PS.TwitchModel = function () {
@@ -32,7 +31,7 @@ PS.TwitchModel.prototype = {
 		this._submitQuery(this._query, pageNo);
 	},
 	findStreams: function (query) {
-		// For a new search, reset the page counter to 0, since we want to start on the first page
+		// For a new search, reset the page counter to 1, since we want to start on the first page
 		this._query = query;
 		this.page = 1;
 		this._submitQuery(query, 0);

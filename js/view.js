@@ -26,7 +26,9 @@ PS.TwitchView.prototype = {
 		// Simple delegation for elements with the class 'pager'
 		if (e.target && e.target.classList && e.target.classList.contains('pager')) {
 			var pageNo = e.target.classList.contains('next') ? this._model.nextPage() : this._model.prevPage();
-			if (pageNo) this.pagerClicked.trigger(pageNo);
+			if (pageNo) {
+				this.pagerClicked.trigger(pageNo);
+			}
 			e.preventDefault();
 		}
 	},
@@ -50,6 +52,8 @@ PS.TwitchView.prototype = {
 			//		data-enable="prop" disables element if model.prop is falsey
 			//		data-repeat="prop" data-template="id" duplicates the template for each element in model.prop
 			//			Within each template, {{value}} is replaced by element.value
+			// Possible improvement: Pull all templating out into a separate class and provide interface for registering new
+			//		template declarations in that class.
 
 			var texts = document.querySelectorAll('[data-text]');
 			for (var i = 0; i < texts.length; i++) {
