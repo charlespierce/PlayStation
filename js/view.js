@@ -1,88 +1,36 @@
-// Using an IIFE here to provide a scope for helper functions used by the templating process
-(function (PS) {
-	'use strict';
+'use strict';
+var PS = PS || {};
 
-	var getValueFromObject = function (obj, param) {
-		if (obj && param) {
-			var value = obj[param];
-			if (typeof value === 'function') {
-				value = value.call(obj);
-			}
-			if (value && value.replace) {
-				value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-			}
-			return value;
-		}
-		return null;
-	};
-	var fillTemplate = function (obj, template) {
-		if (obj && template) {
-			return template.replace(/{{(.*?)}}/g, function (match, p1) {
-				return getValueFromObject(obj, p1, true);
-			});
-		}
-		return null;
-	};
-	
-	PS.TwitchView = function (model) {
-		var self = this;
-		// Possible User Actions
-		self.searchStarted = new PS.Event(self);
-		self.pagerClicked = new PS.Event(self);
-		
-		// Attach handlers to HTML Elements to fire off the events when they happen
-		document.addEventListener('click', function (e) {
-			self.clickHandler(e);
-		});
-		document.addEventListener('submit', function (e) {
-			self.submitHandler(e);
-		});
-		
-		self._model = model;
-		// Attach a handler to the model's loaded event (So we can update the view when the model changes)
-		self._model.loaded.register(function () {
-			self.show();
-		});
-	};
-	PS.TwitchView.prototype.show = function () {
-		var container = document.getElementById('results');
-		if (this._model.streams.length) {
-			container.classList.remove('no-data');
-			// Items are defined by a simple template <script> that replaces {{value}} with model.value
-			var streamList = document.getElementById('streamList');
-			var itemTemplate = document.getElementById('streamTemplate');
-			
-			if (streamList && itemTemplate) {
-				var items = '';
-				for (var i = 0; i < this._model.streams.length; i++) {
-					items += fillTemplate(this._model.streams[i], itemTemplate.innerHTML);
-				}
-				streamList.innerHTML = items;
-			}
-			
-			// Everything else is handled by pulling the data off the model directly
-			var templatedElements = document.querySelectorAll('[data-template]');
-			for (var i = 0; i < templatedElements.length; i++) {
-				var paramName = templatedElements[i].getAttribute('data-template');
-				templatedElements[i].innerHTML = getValueFromObject(this._model, paramName);
-			}
-			
-			// Pagers need additional logic to handle enable / disable
-			
-		} else {
-			// No data from Twitch
-			container.classList.add('no-data');
-		}
-	};
-	PS.TwitchView.prototype.clickHandler = function (e) {
+PS.TwitchView = function (model) {
+	var self = this;
+	// Possible User Actions
+	self.searchStarted = new PS.Event(self);
+	self.pagerClicked = new PS.Event(self);
+
+	// Attach handlers to HTML Elements to fire off the events when they happen
+	document.addEventListener('click', function (e) {
+		self.clickHandler(e);
+	});
+	document.addEventListener('submit', function (e) {
+		self.submitHandler(e);
+	});
+
+	self._model = model;
+	// Attach a handler to the model's loaded event (So we can update the view when the model changes)
+	self._model.loaded.register(function () {
+		self.show();
+	});
+};
+PS.TwitchView.prototype = {
+	clickHandler: function (e) {
 		// Simple delegation for elements with the class 'pager'
 		if (e.target && e.target.classList && e.target.classList.contains('pager')) {
-			var pageNo = e.target.getAttribute('data-page');
+			var pageNo = e.target.classList.contains('next') ? this._model.nextPage() : this._model.prevPage();
 			if (pageNo) this.pagerClicked.trigger(pageNo);
 			e.preventDefault();
 		}
-	};
-	PS.TwitchView.prototype.submitHandler = function (e) {
+	},
+	submitHandler: function (e) {
 		// Simple delegation for elements of type 'form'
 		if (e.target && e.target.tagName == 'FORM') {
 			var query = e.target.querySelectorAll('[name="query"]')[0];
@@ -91,5 +39,49 @@
 			}
 			e.preventDefault();
 		}
-	};
-})(PS || {});
+	},
+	show: function () {
+		var container = document.getElementById('results');
+		if (this._model.totalStreams) {
+			container.classList.remove('no-data');
+
+			// Three types of templates available:
+			//		data-text="prop" replaces the innerHTML with model.prop
+			//		data-enable="prop" disables element if model.prop is falsey
+			//		data-repeat="prop" data-template="id" duplicates the template for each element in model.prop
+			//			Within each template, {{value}} is replaced by element.value
+
+			var texts = document.querySelectorAll('[data-text]');
+			for (var i = 0; i < texts.length; i++) {
+				var param = texts[i].getAttribute('data-text');
+				texts[i].innerHTML = PS.getValueFromObject(this._model, param);
+			}
+
+			var disables = document.querySelectorAll('[data-enable]');
+			for (var i = 0; i < disables.length; i++) {
+				var param = disables[i].getAttribute('data-enable');
+				disables[i].disabled = !PS.getValueFromObject(this._model, param);
+			}
+
+			var repeats = document.querySelectorAll('[data-repeat]');
+			for (var i = 0; i < repeats.length; i++) {
+				var template = document.getElementById(repeats[i].getAttribute('data-template'));
+				var param = repeats[i].getAttribute('data-repeat');
+				var enumerable = PS.getValueFromObject(this._model, param);
+
+				if (template && enumerable && enumerable.length) {
+					var combined = '';
+					for (var j = 0; j < enumerable.length; j++) {
+						combined += PS.fillTemplate(enumerable[j], template.innerHTML);
+					}
+					repeats[i].innerHTML = combined;
+				} else {
+					repeats[i].innerHTML = '';
+				}
+			}
+		} else {
+			// No data from Twitch
+			container.classList.add('no-data');
+		}
+	}
+};

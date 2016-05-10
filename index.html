@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Web Page Title</title>
+    <title>Twitch API Search Streams</title>
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
-    <!-- CSS Links Include Here -->
   </head>
   <body>
 	<form>
 		<input type="text" name="query" />
-		<button type="submit">Save</button>
+		<button type="submit">Search</button>
 	</form>
 	<div id="results">
-		<p>Total results: <span data-template="totalStreams"></span></p>
+		<p>Total results: <span data-text="totalStreams"></span></p>
 		<p>
-			<a href="#" class="pager prev">&lt;</a>
-			<span data-template="page"></span> / <span data-template="pageCount"></span>
-			<a href="#" class="pager next">&gt;</a>
+			<button type="button" class="pager prev" data-enable="prevPage">&lt;</button>
+			<span data-text="page"></span> / <span data-text="pageCount"></span>
+			<button type="button" class="pager next" data-enable="nextPage">&gt;</button>
 		</p>
-		<div id="streamList"></div>
+		<div data-repeat="streams" data-template="streamTemplate"></div>
 	</div>
-	
+
     <script type="text/javascript" src="js/event.js"></script>
+    <script type="text/javascript" src="js/template.js"></script>
 	<script type="text/javascript" src="js/model.js"></script>
 	<script type="text/javascript" src="js/view.js"></script>
 	<script type="text/javascript" src="js/controller.js"></script>
