@@ -6,7 +6,7 @@
 		if (obj && param) {
 			var value = obj[param];
 			if (typeof value === 'function') {
-				value = value();
+				value = value.call(obj);
 			}
 			if (value && value.replace) {
 				value = value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -18,7 +18,7 @@
 	var fillTemplate = function (obj, template) {
 		if (obj && template) {
 			return template.replace(/{{(.*?)}}/g, function (match, p1) {
-				return getValueFromObject(obj, p1);
+				return getValueFromObject(obj, p1, true);
 			});
 		}
 		return null;
@@ -45,24 +45,33 @@
 		});
 	};
 	PS.TwitchView.prototype.show = function () {
-		// TODO: Hide / Show elements based on whether we even have streams to show. If not, just clear the page out
-		// Items are defined by a simple template script that replaces {{value}} with model.value
-		var streamList = document.getElementById('streamList');
-		var itemTemplate = document.getElementById('streamTemplate');
-		
-		if (streamList && itemTemplate) {
-			var items = '';
-			for (var i = 0; i < this._model.streams.length; i++) {
-				items += fillTemplate(this._model.streams[i], itemTemplate.innerHTML);
+		var container = document.getElementById('results');
+		if (this._model.streams.length) {
+			container.classList.remove('no-data');
+			// Items are defined by a simple template <script> that replaces {{value}} with model.value
+			var streamList = document.getElementById('streamList');
+			var itemTemplate = document.getElementById('streamTemplate');
+			
+			if (streamList && itemTemplate) {
+				var items = '';
+				for (var i = 0; i < this._model.streams.length; i++) {
+					items += fillTemplate(this._model.streams[i], itemTemplate.innerHTML);
+				}
+				streamList.innerHTML = items;
 			}
-			streamList.innerHTML = items;
-		}
-		
-		// Everything else is handled by pulling the data off the model directly
-		var templatedElements = document.querySelectorAll('[data-template]');
-		for (var i = 0; i < templatedElements.length; i++) {
-			var paramName = templatedElements[i].getAttribute('data-template');
-			elem.innerHTML = getValueFromObject(this._model, paramName);
+			
+			// Everything else is handled by pulling the data off the model directly
+			var templatedElements = document.querySelectorAll('[data-template]');
+			for (var i = 0; i < templatedElements.length; i++) {
+				var paramName = templatedElements[i].getAttribute('data-template');
+				templatedElements[i].innerHTML = getValueFromObject(this._model, paramName);
+			}
+			
+			// Pagers need additional logic to handle enable / disable
+			
+		} else {
+			// No data from Twitch
+			container.classList.add('no-data');
 		}
 	};
 	PS.TwitchView.prototype.clickHandler = function (e) {
