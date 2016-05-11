@@ -49,6 +49,7 @@ PS.TwitchModel.prototype = {
 			var script = document.createElement('script');
 			script.type = 'text/javascript';
 			script.src = url;
+			script.setAttribute('charset', 'utf-8');
 			var head = document.getElementsByTagName('head')[0];
 			head.appendChild(script);
 			head.removeChild(script);
