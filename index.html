@@ -5,20 +5,25 @@
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
   </head>
   <body>
-	<form>
-		<input type="text" name="query" />
-		<button type="submit">Search</button>
-	</form>
-	<div id="results">
-		<p>Total results: <span data-text="totalStreams"></span></p>
-		<p>
-			<button type="button" class="pager prev" data-enable="prevPage">&lt;</button>
-			<span data-text="page"></span> / <span data-text="pageCount"></span>
-			<button type="button" class="pager next" data-enable="nextPage">&gt;</button>
-		</p>
-		<div data-repeat="streams" data-template="streamTemplate"></div>
+	<div class="container">
+		<form class="search">
+			<input type="text" name="query" />
+			<button type="submit">Search</button>
+		</form>
+		<div id="results">
+			<div class="controls">
+				<div class="totals">Total results: <span data-text="totalStreams"></span></div>
+				<div class="pagers">
+					<button type="button" class="pager prev" data-enable="prevPage"><span class="arrow arrow-left"></span></button>
+					<span data-text="page"></span> / <span data-text="pageCount"></span>
+					<button type="button" class="pager next" data-enable="nextPage"><span class="arrow arrow-right"></span></button>
+				</div>
+			</div>
+			<div data-repeat="streams" data-template="streamTemplate" class="streams"></div>
+		</div>
 	</div>
 
+	<!-- Potential improvement: Minify and Bundle all of these JS files into a single include -->
     <script type="text/javascript" src="js/event.js"></script>
     <script type="text/javascript" src="js/template.js"></script>
 	<script type="text/javascript" src="js/model.js"></script>
@@ -26,11 +31,15 @@
 	<script type="text/javascript" src="js/controller.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<script type="text/html" id="streamTemplate">
-		<div>
-			<img src="{{preview}}" alt="{{displayName}}" />
-			<h1>{{displayName}}</h1>
-			<h2>{{game}} - {{viewers}} viewers</h2>
-			<h3>{{description}}</h3>
+		<div class="stream">
+			<div class="preview">
+				<img src="{{preview}}" alt="{{displayName}}" />
+			</div>
+			<div class="stream-info">
+				<h2>{{displayName}}</h2>
+				<p>{{game}} - {{viewers}} viewers</p>
+				<p>{{description}}</p>
+			</div>
 		</div>
 	</script>
   </body>

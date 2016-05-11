@@ -1,3 +1,85 @@
 .no-data {
 	display: none;
 }
+.container {
+	margin: 10px auto 10px auto;
+	width: 65%;
+	border: 1px solid black;
+}
+.search {
+	padding: 15px;
+}
+#results {
+	padding: 15px;
+	border-top: 1px solid black;
+}
+.stream {
+	margin-bottom: 20px;
+}
+.stream .preview {
+	position: relative;
+	float: left;
+	width: 20%;
+}
+.stream .preview img {
+	width: 100%;
+}
+.stream .stream-info {
+	position: relative;
+	float: left;
+	width: 80%;
+}
+.stream .stream-info h2 {
+	margin-top: 0;
+}
+.controls:after, .stream:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
+}
+.totals {
+	float: left;
+}
+.pagers {
+	float: right;
+}
+.pager {
+	border: 0;
+	background: 0;
+	cursor: pointer;
+	outline: none;
+	border-radius: 3px;
+	padding: 5px 10px;
+}
+.pager:hover {
+	background-color: #eee;
+}
+.pager[disabled]:hover {
+	background-color: inherit;
+}
+.pager[disabled] {
+	cursor: not-allowed;
+	color: #ddd;
+}
+.arrow {
+	display: block;
+	height: 0;
+	width: 0;
+}
+.arrow-left {
+	border-top: 0.5em solid transparent;
+	border-bottom: 0.5em solid transparent;
+	border-right: 0.5em solid;
+}
+.arrow-right {
+	border-top: 0.5em solid transparent;
+	border-bottom: 0.5em solid transparent;
+	border-left: 0.5em solid;
+}
+
+.streams {
+	padding: 10px;
+}
