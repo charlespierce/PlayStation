@@ -31,16 +31,11 @@
 	<script type="text/javascript" src="js/controller.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<script type="text/html" id="streamTemplate">
-		<div class="stream">
-			<div class="preview">
-				<img src="{{preview}}" alt="{{displayName}}" />
-			</div>
-			<div class="stream-info">
-				<h2>{{displayName}}</h2>
-				<p>{{game}} - {{viewers}} viewers</p>
-				<p>{{description}}</p>
-			</div>
-		</div>
+		<a href="{{url}}" class="stream" target="_blank">
+    		<h1><img src="{{preview}}" alt="{{displayName}}" class="preview" />{{displayName}}</h1>
+    		<p>{{game}} - {{viewers}} viewers</p>
+    		<p>{{description}}</p>
+		</a>
 	</script>
   </body>
 </html>
