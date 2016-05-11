@@ -23,9 +23,10 @@ PS.TwitchView = function (model) {
 };
 PS.TwitchView.prototype = {
 	clickHandler: function (e) {
-		// Simple delegation for elements with the class 'pager'
-		if (e.target && e.target.classList && e.target.classList.contains('pager')) {
-			var pageNo = e.target.classList.contains('next') ? this._model.nextPage() : this._model.prevPage();
+		// Delegation for elements with the class 'pager'. Handles the case where a sub-element of .pager is the actual target
+		var target = this._findParent(e.target, '.pager');
+		if (target) {
+			var pageNo = target.classList.contains('next') ? this._model.nextPage() : this._model.prevPage();
 			if (pageNo) {
 				this.pagerClicked.trigger(pageNo);
 			}
@@ -52,8 +53,8 @@ PS.TwitchView.prototype = {
 			//		data-enable="prop" disables element if model.prop is falsey
 			//		data-repeat="prop" data-template="id" duplicates the template for each element in model.prop
 			//			Within each template, {{value}} is replaced by element.value
-			// Possible improvement: Pull all templating out into a separate class and provide interface for registering new
-			//		template declarations in that class.
+			// Possible improvement: Pull all templating out into a separate class and provide interface for
+			//		registering new template declarations in that class.
 
 			var texts = document.querySelectorAll('[data-text]');
 			for (var i = 0; i < texts.length; i++) {
@@ -87,5 +88,14 @@ PS.TwitchView.prototype = {
 			// No data from Twitch
 			container.classList.add('no-data');
 		}
+	},
+	_findParent: function (elem, selector) {
+		// Find all elements that match the selector, then check if they are an ancestor of the passed-in element.
+		//		If so, return the matching element (parent) so that we can access the properties of that element
+		var parents = document.querySelectorAll(selector);
+		for (var i = 0; i < parents.length; i++) {
+			if (parents[i].contains(elem)) return parents[i];
+		}
+		return null;
 	}
 };
