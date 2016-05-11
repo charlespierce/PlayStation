@@ -80,4 +80,5 @@ PS.TwitchStreamModel = function (streamData) {
 	this.viewers = streamData.viewers;
 	this.description = streamData.channel.status;
 	this.preview = streamData.preview.medium;
+	this.url = streamData.channel.url;
 };
