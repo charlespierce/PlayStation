@@ -56,16 +56,18 @@
 }
 .pager {
 	border: 0;
-	background: 0;
+	background-color: transparent;
 	cursor: pointer;
 	outline: none;
 	padding: 5px 10px;
+	vertical-align: middle;
+	margin-top: -2px;
 }
 .pager:hover {
 	background-color: #eee;
 }
 .pager[disabled]:hover {
-	background-color: inherit;
+	background-color: transparent;
 }
 .pager[disabled] {
 	cursor: not-allowed;
