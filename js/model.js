@@ -11,12 +11,14 @@ PS.TwitchModel = function () {
 	self.itemsPerPage = 10;
 
 	// Create Handler for use with JSONP Requests
-	// Possible improvement: Generate a unique ID to use as the property name and store that, so that many Models can coexist
+	// Production improvement: Generate a unique ID to use as the property name and store that
+	//		so that Models can coexist
 	PS.TwitchAPIResponse = function (data) {
 		self._parseResult(data);
 	};
 };
 PS.TwitchModel.prototype = {
+	// The following 3 methods are used to access calculated information about the model
 	pageCount: function () {
 		return this.totalStreams == 0 ? 0 : Math.ceil(this.totalStreams / this.itemsPerPage);
 	},
@@ -26,25 +28,27 @@ PS.TwitchModel.prototype = {
 	prevPage: function () {
 		return this.page - 1;
 	},
+	// Instruct the model to switch to a specific page
 	goToPage: function (pageNo) {
 		this.page = pageNo;
 		this._submitQuery(this._query, pageNo);
 	},
+	// Instruct the model to switch to a new search query, switching back to page 1
 	findStreams: function (query) {
-		// For a new search, reset the page counter to 1, since we want to start on the first page
 		this._query = query;
 		this.page = 1;
 		this._submitQuery(query, 0);
 	},
+	// Actually perform the JSONP Request to the Twitch API
 	_submitQuery: function (query, pageNo) {
 		if (query) {
-			// Perform JSONP Request to Twitch API
 			var url = 'https://api.twitch.tv/kraken/search/streams?callback=PS.TwitchAPIResponse&q=';
 			url += encodeURIComponent(query);
 			url += '&limit=' + this.itemsPerPage;
 			if (pageNo > 1) {
 				url += '&offset=' + ((pageNo - 1) * this.itemsPerPage);
 			}
+			// Add a semi-unique string of numbers to the query to prevent the browser from caching the results
 			url += '&nocache=' + (new Date()).getTime();
 			var script = document.createElement('script');
 			script.type = 'text/javascript';
@@ -61,6 +65,7 @@ PS.TwitchModel.prototype = {
 			this.loaded.trigger();
 		}
 	},
+	// Handle pulling the JSON data returned by the Twitch API into the model
 	_parseResult: function (data) {
 		// Note: There is a known issue with the Twitch API wherein /search/streams will not return all streams
 		//	in the list, even though the total count is correct
@@ -74,6 +79,7 @@ PS.TwitchModel.prototype = {
 	}
 };
 
+// Sub-Model representing information about a single stream
 PS.TwitchStreamModel = function (streamData) {
 	this.displayName = streamData.channel.display_name;
 	this.game = streamData.game;

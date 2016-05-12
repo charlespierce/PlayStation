@@ -7,7 +7,7 @@ PS.TwitchView = function (model) {
 	self.searchStarted = new PS.Event(self);
 	self.pagerClicked = new PS.Event(self);
 
-	// Attach handlers to HTML Elements to fire off the events when they happen
+	// Attach handlers to the document to delegate events when they happen
 	document.addEventListener('click', function (e) {
 		self.clickHandler(e);
 	});
@@ -16,14 +16,14 @@ PS.TwitchView = function (model) {
 	});
 
 	self._model = model;
-	// Attach a handler to the model's loaded event (So we can update the view when the model changes)
+	// Attach a handler to the model's loaded event to update the view when the model changes
 	self._model.loaded.register(function () {
 		self.show();
 	});
 };
 PS.TwitchView.prototype = {
+	// Delegation for elements with the class 'pager'. Handles the case where a sub-element of .pager is the actual target
 	clickHandler: function (e) {
-		// Delegation for elements with the class 'pager'. Handles the case where a sub-element of .pager is the actual target
 		var target = this._findParent(e.target, '.pager');
 		if (target) {
 			var pageNo = target.classList.contains('next') ? this._model.nextPage() : this._model.prevPage();
@@ -33,8 +33,8 @@ PS.TwitchView.prototype = {
 			e.preventDefault();
 		}
 	},
+	// Simple delegation for elements of the type 'form'
 	submitHandler: function (e) {
-		// Simple delegation for elements of type 'form'
 		if (e.target && e.target.tagName == 'FORM') {
 			var query = e.target.querySelectorAll('[name="query"]')[0];
 			if (query) {
@@ -43,6 +43,7 @@ PS.TwitchView.prototype = {
 			e.preventDefault();
 		}
 	},
+	// Update the document using data from the model
 	show: function () {
 		var container = document.getElementById('results');
 		if (this._model.totalStreams) {
@@ -53,7 +54,7 @@ PS.TwitchView.prototype = {
 			//		data-enable="prop" disables element if model.prop is falsey
 			//		data-repeat="prop" data-template="id" duplicates the template for each element in model.prop
 			//			Within each template, {{value}} is replaced by element.value
-			// Possible improvement: Pull all templating out into a separate class and provide interface for
+			// Production improvement: Pull all templating out into a separate class and provide interface for
 			//		registering new template declarations in that class.
 
 			var texts = document.querySelectorAll('[data-text]');
@@ -89,9 +90,9 @@ PS.TwitchView.prototype = {
 			container.classList.add('no-data');
 		}
 	},
+	// Find all elements that match the selector, then check if they are an ancestor of the passed-in element.
+	//		If so, return the matching element (parent) so that we can access the properties of that element
 	_findParent: function (elem, selector) {
-		// Find all elements that match the selector, then check if they are an ancestor of the passed-in element.
-		//		If so, return the matching element (parent) so that we can access the properties of that element
 		var parents = document.querySelectorAll(selector);
 		for (var i = 0; i < parents.length; i++) {
 			if (parents[i].contains(elem)) return parents[i];

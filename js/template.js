@@ -1,6 +1,8 @@
 'use strict';
 var PS = PS || {};
 
+// Get the value of parameter 'param' off of obj. If that is actually a method, instead call that method
+// If the resultant value is a string, HTML encode it so that it doesn't wind up generating actual HTML
 PS.getValueFromObject = function (obj, param) {
     if (obj && param) {
         var value = obj[param];
@@ -15,6 +17,7 @@ PS.getValueFromObject = function (obj, param) {
     return null;
 };
 
+// Replace all {{param}} blocks in the template string with the actual value of obj.param
 PS.fillTemplate = function (obj, template) {
     if (obj && template) {
         return template.replace(/{{(.*?)}}/g, function (match, p1) {

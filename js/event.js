@@ -2,6 +2,7 @@
 
 var PS = PS || {};
 
+// Simple implementation of an Event system, allows other objects to register event callbacks
 PS.Event = function (sender) {
 	this._sender = sender;
 	this._handlers = [];

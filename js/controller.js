@@ -4,7 +4,7 @@ var PS = PS || {};
 
 PS.TwitchController = function (model, view) {
 	// Ridiculously simple controller, could technically be replaced by having the view call model methods directly.
-	// However, that choice limits future development decisions and makes the view harder to test.
+	// However, that choice would limit future development decisions
 	view.searchStarted.register(function (sender, query) {
 		model.findStreams(query);
 	});

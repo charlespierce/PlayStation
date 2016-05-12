@@ -1,4 +1,5 @@
 (function () {
+	// Set up the Model, View and Controller and start the app working
 	var model = new PS.TwitchModel();
 	var view = new PS.TwitchView(model);
 	var controller = new PS.TwitchController(model, view);
